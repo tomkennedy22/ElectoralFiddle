@@ -30,40 +30,40 @@ AllUsedFields = DimensionFields + TotalsFields + PercentageFields
 
 f = open('acs2015_census_tract_data.csv', 'r')
 
-headers = []
-line_count = 0
+Headers = []
+LineCount = 0
 for line in f:
-    line_dict = {}
-    line_vals = line.split(',')
+    LineDict = {}
+    LineVals = line.split(',')
     SkipLine = False
-    if line_count == 0:
-        headers = line_vals
+    if LineCount == 0:
+        Headers = LineVals
 
     else:
 
-        cell_count = 0
-        for cell in line_vals:
-            header_field = headers[cell_count]
+        CellCount = 0
+        for Cell in LineVals:
+            HeaderField = Headers[CellCount]
 
-            if header_field in AllUsedFields and not SkipLine:
-                if header_field in PercentageFields:
-                    line_dict[header_field+'_total'] = int(float(cell) / 100.0 * line_dict['TotalPop'])
-                elif header_field in TotalsFields:
-                    line_dict[header_field] = int(cell)
-                    if cell == '0' or len(cell) == 0:
+            if HeaderField in AllUsedFields and not SkipLine:
+                if HeaderField in PercentageFields:
+                    LineDict[HeaderField+'_total'] = int(float(Cell) / 100.0 * LineDict['TotalPop'])
+                elif HeaderField in TotalsFields:
+                    LineDict[HeaderField] = int(Cell)
+                    if Cell == '0' or len(Cell) == 0:
                         SkipLine = True
                 else:
-                    line_dict[headers[cell_count]] = cell
+                    LineDict[Headers[CellCount]] = Cell
 
-            cell_count +=1
+            CellCount +=1
 
 
         if not SkipLine:
-            Tract = line_dict['CensusTract']
-            TractDict[Tract] = line_dict
+            Tract = LineDict['CensusTract']
+            TractDict[Tract] = LineDict
 
 
-    line_count +=1
+    LineCount +=1
 
 for Tract in TractDict:
     TractData = TractDict[Tract]
