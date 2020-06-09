@@ -717,6 +717,32 @@ function ColorFromValue(Val){
   return '#'+Red_Hex + '0'+ Blue_Hex;
 }
 
+function ColorStates(){
+  $.each(StateCensusData, function(StateName, StateObj){
+    var svg = $('path[statename="'+StateName+'"]');
+    console.log(svg);
+
+    var StateTotalPop = 0;
+    var StateBlueVotes = 0;
+    var StateRedVotes = 0;
+
+    $('.slider-td').each(function(ind, td){
+      var Ethnicity = $(td).attr('ethnicity');
+      var BluePercent = $(td).slider('option', 'value') / 100.0;
+      var RedPercent = 1 - BluePercent;
+
+      StateBlueVotes += StateObj[Ethnicity] * BluePercent;
+      StateRedVotes += StateObj[Ethnicity] * RedPercent;
+
+      StateTotalPop +=  StateObj[Ethnicity];
+    });
+
+    var StateBluePercentage = StateBlueVotes / StateTotalPop;
+    var Color_Hex = ColorFromValue(StateBluePercentage * 100);
+    $(svg).attr('fill', Color_Hex);
+  });
+}
+
 $(document).ready(function(){
   console.log('In js');
 
@@ -735,15 +761,17 @@ $(document).ready(function(){
   var EthnicityHeader = $('#ethnicity-header');
   var EthnicitySliders = $('#ethnicity-slider');
 
+  var SliderList = [];
+
   $.each(DemographicData, function(Ethnicity, EthnicityObj){
 
     EthnicityHeader.append('<th>'+Ethnicity+'</th>')
 
-    var NewSlider = $(`<td style=' width: 20px;'>
+    var NewSlider = $(`<td style=' width: 20px;' class='slider-td' ethnicity='`+Ethnicity+`'>
         <div class="slider-vertical" style="height:200px;"></div>
     </td>`)
 
-    $( NewSlider ).slider({
+    var SliderObj = $( NewSlider ).slider({
         orientation: "vertical",
         range: "min",
         min: 0,
@@ -756,12 +784,17 @@ $(document).ready(function(){
         slide: function( event, ui ) {
           var Color_Hex = ColorFromValue(ui.value)
           $(event.target).find('.ui-slider-range').css('background-color', Color_Hex);
+        },
+        stop: function(event, ui){
+          //console.log($('.slider-td'));
+          ColorStates();
         }
       });
 
       EthnicitySliders.append(NewSlider);
   });
 
+  ColorStates();
 
 
 });
