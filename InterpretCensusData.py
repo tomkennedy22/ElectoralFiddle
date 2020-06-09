@@ -80,7 +80,7 @@ for Tract in TractDict:
     for PercentageField in PercentageFields:
         StateDict[State][PercentageField] += TractData[PercentageField+'_total']
 
-
+print(StateDict)
 o = open('StateCensusData.csv', 'w')
 HeaderLines = ','.join([Field for Field in OutputFields])
 o.write(HeaderLines)
