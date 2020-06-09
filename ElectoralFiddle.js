@@ -701,6 +701,21 @@ function Min(a,b){
   return b;
 }
 
+
+function HandleDisplay(Handle, Value){
+  if (Value > 50){
+    var HandleVal = 'B +' + ((Value-50) * 2).toString();
+  }
+  else if (Value < 50) {
+    var HandleVal = 'R +' + ((50 - Value) * 2).toString();
+  }
+  else {
+    var HandleVal = '-'
+  }
+
+  $(Handle).text(HandleVal);
+}
+
 function ColorFromValue(Val){
   var BluePercent = Val / 100.0;
   var RedPercent = 1 - BluePercent;
@@ -720,7 +735,6 @@ function ColorFromValue(Val){
 function ColorStates(){
   $.each(StateCensusData, function(StateName, StateObj){
     var svg = $('path[statename="'+StateName+'"]');
-    console.log(svg);
 
     var StateTotalPop = 0;
     var StateBlueVotes = 0;
@@ -783,7 +797,10 @@ $(document).ready(function(){
         },
         slide: function( event, ui ) {
           var Color_Hex = ColorFromValue(ui.value)
+
           $(event.target).find('.ui-slider-range').css('background-color', Color_Hex);
+
+          HandleDisplay($(ui.handle), ui.value);
         },
         stop: function(event, ui){
           //console.log($('.slider-td'));
@@ -791,6 +808,7 @@ $(document).ready(function(){
         }
       });
 
+      HandleDisplay($(NewSlider).find('.ui-slider-handle'), EthnicityObj.Default);
       EthnicitySliders.append(NewSlider);
   });
 
